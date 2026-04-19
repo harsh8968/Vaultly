@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vaultly — Your Personal Cloud Gallery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Starfield canvas -->
+  <canvas id="starfield"></canvas>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="15" stroke="white" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="6" fill="white" fill-opacity="0.15" stroke="white" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2.5" fill="white"/>
+          <line x1="16" y1="1" x2="16" y2="8" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="16" y1="24" x2="16" y2="31" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="1" y1="16" x2="8" y2="16" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="24" y1="16" x2="31" y2="16" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span class="logo-text">Vaultly</span>
+      </div>
+      <div class="header-actions">
+        <button class="settings-btn" id="resetKeysBtn" aria-label="Settings" title="Reset API keys" style="display:none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          Keys
+        </button>
+        <button class="upload-btn" id="openModalBtn" aria-label="Upload photo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Upload
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <p class="hero-sub">Your personal cloud gallery</p>
+    <h1 class="hero-title">Every moment,<br /><em>beautifully stored.</em></h1>
+  </section>
+
+  <!-- Filter bar -->
+  <div class="filter-bar" role="tablist" aria-label="Filter by category">
+    <button class="filter-btn active" data-category="all" role="tab" aria-selected="true">All</button>
+    <button class="filter-btn" data-category="Nature" role="tab" aria-selected="false">Nature</button>
+    <button class="filter-btn" data-category="Travel" role="tab" aria-selected="false">Travel</button>
+    <button class="filter-btn" data-category="Architecture" role="tab" aria-selected="false">Architecture</button>
+    <button class="filter-btn" data-category="People" role="tab" aria-selected="false">People</button>
+    <button class="filter-btn" data-category="Food" role="tab" aria-selected="false">Food</button>
+    <button class="filter-btn" data-category="Abstract" role="tab" aria-selected="false">Abstract</button>
+    <button class="filter-btn" data-category="Other" role="tab" aria-selected="false">Other</button>
+  </div>
+
+  <!-- Gallery -->
+  <main class="gallery-container">
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState">
+      <svg class="empty-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="8" y="14" width="48" height="36" rx="4" stroke="white" stroke-opacity="0.3" stroke-width="2"/>
+        <circle cx="24" cy="28" r="5" stroke="white" stroke-opacity="0.3" stroke-width="2"/>
+        <path d="M8 38 L20 26 L30 36 L40 24 L56 38" stroke="white" stroke-opacity="0.3" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+      <p class="empty-title">Your vault is empty</p>
+      <p class="empty-sub">Upload your first photo to get started</p>
+      <button class="upload-btn outline" id="emptyUploadBtn">Upload a photo</button>
+    </div>
+
+    <!-- Photo grid -->
+    <div class="gallery-grid" id="galleryGrid" aria-live="polite"></div>
+
+    <!-- Loading state -->
+    <div class="loading-state" id="loadingState">
+      <div class="spinner"></div>
+    </div>
+  </main>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Close">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+    <div class="lightbox-content">
+      <img class="lightbox-img" id="lightboxImg" src="" alt="" />
+      <div class="lightbox-info">
+        <h2 class="lightbox-title" id="lightboxTitle"></h2>
+        <span class="lightbox-cat" id="lightboxCat"></span>
+        <p class="lightbox-desc" id="lightboxDesc"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Modal -->
+  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalHeading">
+    <div class="modal" id="uploadModal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalHeading">Add to Vault</h2>
+        <button class="modal-close" id="closeModalBtn" aria-label="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <form id="uploadForm" novalidate>
+        <!-- Drop zone -->
+        <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-label="Choose or drop image">
+          <div class="drop-zone-inner" id="dropZoneInner">
+            <svg class="drop-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <p class="drop-label">Drop image here or <span class="drop-link">browse</span></p>
+            <p class="drop-hint">PNG, JPG, WEBP · Max 32 MB</p>
+          </div>
+          <img class="drop-preview" id="dropPreview" src="" alt="Preview" />
+          <input type="file" id="fileInput" accept="image/*" class="file-input" aria-label="Select image file" />
+        </div>
+
+        <!-- Fields -->
+        <div class="form-group">
+          <label class="form-label" for="titleInput">Title <span class="required">*</span></label>
+          <input class="form-input" id="titleInput" type="text" placeholder="e.g. Misty Morning at the Lake" maxlength="80" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="categorySelect">Category <span class="required">*</span></label>
+          <select class="form-input form-select" id="categorySelect" required>
+            <option value="" disabled selected>Choose a category…</option>
+            <option value="Nature">Nature</option>
+            <option value="Travel">Travel</option>
+            <option value="Architecture">Architecture</option>
+            <option value="People">People</option>
+            <option value="Food">Food</option>
+            <option value="Abstract">Abstract</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="descriptionInput">
+            Description
+            <span class="ai-badge" id="aiBadge">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg>
+              Gemini
+            </span>
+            <span class="ai-thinking" id="aiThinking" style="display:none">
+              <span class="ai-dot"></span><span class="ai-dot"></span><span class="ai-dot"></span>
+              generating…
+            </span>
+          </label>
+          <textarea
+            class="form-input form-textarea"
+            id="descriptionInput"
+            placeholder="Drop an image above — Gemini will auto-generate a description for you"
+            rows="3"
+            maxlength="500"
+          ></textarea>
+        </div>
+
+        <!-- Error message -->
+        <p class="form-error" id="formError" role="alert"></p>
+
+        <!-- Submit -->
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span id="submitLabel">Upload to Vault</span>
+          <div class="btn-spinner" id="btnSpinner"></div>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SETUP SCREEN  (shown on first run, hidden after config)
+       ═══════════════════════════════════════════════════════ -->
+  <div class="setup-screen" id="setupScreen">
+    <div class="setup-card">
+
+      <!-- Logo -->
+      <div class="setup-logo">
+        <svg width="36" height="36" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="15" stroke="white" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="6" fill="white" fill-opacity="0.15" stroke="white" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2.5" fill="white"/>
+          <line x1="16" y1="1" x2="16" y2="8" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="16" y1="24" x2="16" y2="31" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="1" y1="16" x2="8" y2="16" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="24" y1="16" x2="31" y2="16" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span>Vaultly</span>
+      </div>
+
+      <h1 class="setup-title">Connect your services</h1>
+      <p class="setup-subtitle">Paste your API keys below — they're saved locally in your browser and never sent anywhere else.</p>
+
+      <form id="setupForm" novalidate>
+
+        <!-- ImgBB -->
+        <div class="setup-section">
+          <div class="setup-section-header">
+            <span class="setup-badge">1</span>
+            <div>
+              <p class="setup-section-title">ImgBB API Key</p>
+              <p class="setup-section-hint">Free image hosting · <a class="setup-link" href="https://api.imgbb.com" target="_blank" rel="noopener">api.imgbb.com</a> → sign up → API</p>
+            </div>
+          </div>
+          <input
+            class="form-input setup-input"
+            id="setupImgbbKey"
+            type="text"
+            placeholder="e.g. a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4"
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </div>
+
+        <!-- Firebase -->
+        <div class="setup-section">
+          <div class="setup-section-header">
+            <span class="setup-badge">2</span>
+            <div>
+              <p class="setup-section-title">Firebase Config</p>
+              <p class="setup-section-hint">
+                <a class="setup-link" href="https://console.firebase.google.com" target="_blank" rel="noopener">console.firebase.google.com</a>
+                → New project → Add web app → copy the config object JSON
+              </p>
+            </div>
+          </div>
+          <textarea
+            class="form-input setup-textarea"
+            id="setupFirebaseConfig"
+            placeholder='{
+  "apiKey": "AIza...",
+  "authDomain": "my-app.firebaseapp.com",
+  "projectId": "my-app",
+  "storageBucket": "my-app.appspot.com",
+  "messagingSenderId": "123456789",
+  "appId": "1:123:web:abc"
+}'
+            rows="7"
+            autocomplete="off"
+            spellcheck="false"
+          ></textarea>
+        </div>
+
+        <!-- Firestore rules reminder -->
+        <div class="setup-notice">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Enable <strong>Firestore Database</strong> in your Firebase project (test mode is fine to start).</span>
+        </div>
+
+        <!-- Error -->
+        <p class="form-error setup-error" id="setupError" role="alert"></p>
+
+        <!-- Submit -->
+        <button type="submit" class="submit-btn" id="setupSaveBtn">
+          <span id="setupSaveLabel">Save &amp; Open Vaultly</span>
+          <div class="btn-spinner" id="setupSpinner"></div>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- env.js must run before app.js — do NOT commit this file -->
+  <script src="env.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

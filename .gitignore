@@ -1,0 +1,8 @@
+# Credentials — never commit these
+.env
+.env.*
+env.js
+
+# OS
+.DS_Store
+Thumbs.db
